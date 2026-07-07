@@ -56,7 +56,10 @@ gets recorded here when a comparison happens.
 
 1. Grayscale conversion (`cv2.cvtColor`)
 2. Gaussian blur, `preprocessing.gaussian_kernel` (halftone/denoise smoothing)
-3. Otsu global threshold, inverted (`THRESH_BINARY_INV | THRESH_OTSU`) → ink becomes white
+3. Thresholding, inverted so ink becomes white — `preprocessing.threshold_method`:
+   `otsu` (global), `adaptive` (local Gaussian), or `otsu+adaptive` (union, default).
+   The union exists because global Otsu alone lost small body text on the real test
+   page (verification loop iters 1–3; see CLAUDE.md decisions log).
 4. Morphological opening, `preprocessing.morph_open_kernel` (speck/dust removal)
 5. Border clearing: connected components whose bounding box touches within
    `preprocessing.border_margin_px` of any page edge are removed (scanner edge artifacts)

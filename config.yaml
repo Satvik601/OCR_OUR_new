@@ -3,7 +3,10 @@
 # Verification thresholds used by PHASE_VERIFICATION_LOOP.md checks live under `verification`.
 
 preprocessing:
-  gaussian_kernel: 5          # odd kernel size for Gaussian blur (halftone smoothing)
+  gaussian_kernel: 3          # odd kernel size for Gaussian blur (halftone smoothing); 5 wiped small body text on the real page (loop iter 1)
+  threshold_method: otsu+adaptive   # otsu | adaptive | otsu+adaptive — global-only Otsu lost small body text (loop iters 1-2)
+  adaptive_block_size: 31     # odd; local window for adaptive threshold
+  adaptive_c: 10              # constant subtracted from local mean (higher = less noise)
   morph_open_kernel: 3        # square kernel for morphological opening (speck removal)
   morph_open_iterations: 1
   border_margin_px: 5         # components whose bbox touches within this margin of the page edge are cleared

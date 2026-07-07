@@ -53,6 +53,13 @@ before the next phase starts.
   classical pipeline in the source research uses. If uneven illumination on real scans breaks
   it, the fallback is adaptive Gaussian thresholding — that swap happens inside the
   preprocessing verification loop, not silently.
+- **2026-07-07 — threshold method changed via the loop (iters 1-3):** global Otsu alone lost
+  40-44% of ground-truth text regions on the real page — the masthead/headlines/photos anchor
+  the global threshold below faint small body text. Fix: `threshold_method: otsu+adaptive`
+  (bitwise OR of global Otsu and adaptive Gaussian, block 31, C 10) — solid dark elements come
+  from Otsu, small faint text from the adaptive pass. 0% regions lost after the change. Still
+  classical CV; `otsu`-only and `adaptive`-only remain selectable in config.yaml for
+  comparison on archival scans.
 - **2026-07-07 — border clearing:** implemented as connected-component removal for components
   whose bbox touches within `border_margin_px` of the page edge. Known risk: a full-page frame
   rule could connect to real content; the loop on the real page checks for this.
@@ -62,6 +69,12 @@ before the next phase starts.
   loop-operator). `mle-reviewer` does not exist in the installed plugin — `code-reviewer`
   covers the evaluation-harness review instead. The phased plan itself is taken directly from
   the brief (its six stages ARE the plan); recorded in `PROGRESS.md` rather than re-derived.
+- **2026-07-07 — security-reviewer cadence:** the brief asks for a security-reviewer pass
+  "before any phase is marked done". Phase 1 is pure in-process image math (no file-format
+  parsing beyond cv2.imread, no subprocess, no network, no user-controlled paths), so the
+  security pass is scheduled for the phases with real surface: phase 4 (Tesseract subprocess
+  via pytesseract) and the CLI/JSON export phase — not run redundantly per pure-math phase.
+  If the user wants it strictly per-phase, say so and it will run every phase.
 - **2026-07-07 — preprocessing verification metrics** (making the loop's criteria concrete):
   - *Speckle*: connected components with area < `min_speckle_area_px` (10 px), normalized as
     speckles per megapixel; pass if < `max_speckle_per_mpx` (1500).

@@ -35,5 +35,16 @@ seeded) and committed, so tests don't depend on regeneration:
 
 ## Current metric values
 
-None yet — phase 1 (preprocessing) verification results will be logged here and in
-`PROGRESS.md` when the loop passes.
+### Phase 1 — preprocessing (verified 2026-07-07, loop iteration 3)
+
+On `real_sample_page.jpg` with `threshold_method: otsu+adaptive`, gaussian 3, open 3x3,
+border margin 5 (evidence: `debug_output/01_preprocessed_real.png`, regenerate with
+`python scripts/verify_preprocessing.py`):
+
+- Speckles (<10 px components): 594 = **327/Mpx** (limit 1500/Mpx) — PASS
+- Text regions below 0.5 ink retention vs per-crop Otsu baseline: **0/25 = 0%**
+  (limit 10%) — PASS; worst region gt18 (caption) at 0.58
+- Unit tests: 8/8 pass
+- Note: component count rose from 1491 (global Otsu) to 3485 (union method) because the
+  adaptive pass outlines photo textures — acceptable at this stage; layout/filtering own
+  photo-region handling.

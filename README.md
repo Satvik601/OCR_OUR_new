@@ -10,7 +10,7 @@ Under construction, phase by phase (see `PROGRESS.md`):
 
 | Phase | Status |
 |---|---|
-| 1. Preprocessing (grayscale → blur → Otsu → opening → border clear) | in progress |
+| 1. Preprocessing (grayscale → blur → Otsu∪adaptive → opening → border clear) | **passed verification** |
 | 2. Layout detection (morphological, contour boxes) | not started |
 | 3. Filtering (area / containment / garbage text) | not started |
 | 4. Per-region OCR (Tesseract PSM 6, LSTM, 2x bicubic upscale) | not started |

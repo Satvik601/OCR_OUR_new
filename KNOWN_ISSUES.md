@@ -19,8 +19,13 @@
   both the page edge and a text component, that component gets cleared. Watched for in the
   preprocessing loop on the real page; mitigation (max component size for clearing) not yet
   implemented.
-- **Global Otsu assumes reasonably even illumination.** Old scans with strong gradients may
-  need the adaptive-threshold fallback (see CLAUDE.md decisions log). Not yet exercised.
+- **Adaptive threshold outlines photo halftones.** The `otsu+adaptive` union (adopted in
+  loop iter 3) more than doubles connected components (1491 → 3485) because photos become
+  edge texture. Layout detection (phase 2) must merge/ignore these; if they fragment layout
+  boxes, revisit (e.g. texture masking) — tracked for phase 2.
+- **Small body text binarizes thin/broken at this resolution** (worst GT region retention
+  0.58). Fine for layout detection; OCR (phase 4) crops the ORIGINAL image, not this binary,
+  so OCR quality is unaffected by this — but verify in phase 4.
 - **Reverse text (white-on-color boxes, e.g. the red quote sidebar) inverts under
   THRESH_BINARY_INV** — those regions binarize as solid blobs, which layout detection will
   see as one region and OCR (which re-crops the original, not the binary) may still read.
