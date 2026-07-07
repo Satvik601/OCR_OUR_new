@@ -64,15 +64,17 @@ def make_simple() -> tuple[np.ndarray, list[dict]]:
 
 def make_noisy(simple: np.ndarray) -> np.ndarray:
     rng = np.random.default_rng(SEED + 1)
-    img = simple.astype(np.float32)
+    degraded = simple.astype(np.float32)
 
     # uneven illumination: horizontal gradient 0.65 .. 1.0
     gradient = np.linspace(0.65, 1.0, W, dtype=np.float32)[None, :]
-    img *= gradient
+    degraded *= gradient
 
-    # gaussian noise
-    img += rng.normal(0, 12, img.shape).astype(np.float32)
-    img = np.clip(img, 0, 255).astype(np.uint8)
+    # gaussian noise (explicit shape annotation: ndarray.shape is Any under the numpy
+    # stubs, which sends mypy down rng.normal's scalar overload)
+    shape: tuple[int, int] = degraded.shape
+    degraded += rng.normal(0, 12, shape).astype(np.float32)
+    img: np.ndarray = np.clip(degraded, 0, 255).astype(np.uint8)
 
     # salt & pepper specks (0.5% of pixels)
     n = int(0.005 * W * H)

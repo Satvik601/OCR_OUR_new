@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from pathlib import Path
 from typing import Any
 
@@ -36,7 +37,8 @@ class Config:
         return value
 
     def as_dict(self) -> dict[str, Any]:
-        return self._data
+        """Deep copy — mutating the result never mutates the loaded Config."""
+        return copy.deepcopy(self._data)
 
 
 def load_config(path: str | Path | None = None) -> Config:

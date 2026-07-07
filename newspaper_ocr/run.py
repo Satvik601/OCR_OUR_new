@@ -33,14 +33,23 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    config = load_config(args.config)
+    try:
+        config = load_config(args.config)
+    except (OSError, ValueError) as exc:
+        print(f"error: could not load config: {exc}", file=sys.stderr)
+        return 2
 
     image = cv2.imread(args.input, cv2.IMREAD_COLOR)
     if image is None:
         print(f"error: could not read image: {args.input}", file=sys.stderr)
         return 2
 
-    binary = preprocess(image, config)
+    try:
+        binary = preprocess(image, config)
+    except (ValueError, AttributeError) as exc:
+        # bad parameter value / missing config key — clean message, not a traceback
+        print(f"error: preprocessing failed: {exc}", file=sys.stderr)
+        return 2
 
     if args.debug_dir:
         debug_dir = Path(args.debug_dir)

@@ -35,6 +35,11 @@
 - **No deskew step.** The brief's preprocessing list doesn't include one; synthetic noisy
   fixture includes mild skew to find out empirically whether it hurts layout detection.
 
+- **`types-PyYAML` not installed** — `mypy` flags `import yaml` as untyped. mypy is not
+  (yet) part of the project toolchain; if it gets added to CI, add `types-PyYAML` to the
+  dev dependencies.
+
 ## Resolved
 
-(none yet)
+- ~~Global Otsu loses small body text on pages with heavy dark masses~~ — fixed in phase 1
+  loop iter 3 via `threshold_method: otsu+adaptive` (see CLAUDE.md decisions log).
