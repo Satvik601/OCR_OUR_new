@@ -141,7 +141,7 @@ against GT text over matched text regions, weighted by GT word count.
   _validate_tesseract_params. Fixed from its findings: decompression-bomb guard
   (limits.max_image_pixels, header check before decode) and cache value type validation.
   LOW leftovers (cache_dir trust boundary, pip-audit in CI) logged in KNOWN_ISSUES.md.
-- Commit + tag: recorded below after review + push protocol step.
+- Commit `050c667`, tag `v0.4-ocr` (local-only, push pending remote).
 
 ## 2026-07-08 — milestone: PHASE 5 JSON EXPORT — verification loop PASSED (iteration 1)
 
@@ -161,7 +161,7 @@ with required fields; no malformed entries.
 - Integration test added per the brief (full pipeline on synthetic page through
   `run.main`, JSON schema-validated, >50 words extracted, headline text recovered).
   Suite: 63/63.
-- Commit + tag: recorded below after review + push protocol step.
+- Commit `6d398a8`, tag `v0.5-json` (local-only, push pending remote).
 
 ## 2026-07-08 — milestone: PHASE 6 EVALUATION — verification loop PASSED (iteration 1)
 
@@ -187,4 +187,11 @@ metrics without errors.
 - evaluate() metrics: greedy IoU matching (same 0.5 criterion as the layout gate),
   GT-word-count-weighted word accuracy, fragmentation (overlaps at IoU ≥ 0.1),
   articles found. Unit-tested on constructed documents (5 tests). Suite: 68/68.
-- Commit + tag: recorded below after review + push protocol step.
+- Commit `0461942`, tag `v0.6-evaluation` (local-only, push pending remote).
+
+## 2026-07-08 — ALL SIX PIPELINE PHASES COMPLETE
+
+Every phase passed PHASE_VERIFICATION_LOOP.md on the real page and is committed and
+tagged. Outstanding before the project is fully "done" per GITHUB_PUSH_PROTOCOL.md:
+the user must supply the GitHub repo URL so all commits + tags can be pushed
+(`git push --follow-tags`). Open quality items live in KNOWN_ISSUES.md.
