@@ -1,0 +1,254 @@
+{
+  "source_image": "real_sample_page.jpg",
+  "page_size": [1220, 1490],
+  "annotation_note": "Annotated 2026-07-07 by the agent visually reading the page at full resolution. Boxes are accurate to roughly +/-15 px. 'text' is the transcription of the region's text; regions where transcription is partial are marked text_complete=false. Photos are annotated as region_type='photo' with text=''. article_id groups regions into logical articles; page furniture (masthead, dateline) has article_id=null.",
+  "article_count": 4,
+  "articles": {
+    "art1": "Use 80% capacity for medical-grade oxygen: state govt to industry",
+    "art2": "Restarting local trains? Rework stations: study",
+    "art3": "Mumbai's doubling rate falls further to 58 days",
+    "art4": "CR, WR data shows 25 lakh migrants back in the city"
+  },
+  "regions": [
+    {
+      "id": "gt01",
+      "bbox": {"x": 120, "y": 20, "w": 975, "h": 165},
+      "region_type": "masthead",
+      "article_id": null,
+      "text": "mid-day",
+      "text_complete": true
+    },
+    {
+      "id": "gt02",
+      "bbox": {"x": 125, "y": 180, "w": 965, "h": 28},
+      "region_type": "other",
+      "article_id": null,
+      "text": "Jagran September 12, 2020, Saturday, 24 pages ₹4, Mumbai | Phone : 6831 4800 | Fax : 2642 6812 | www.mid-day.com",
+      "text_complete": true
+    },
+    {
+      "id": "gt03",
+      "bbox": {"x": 18, "y": 245, "w": 420, "h": 120},
+      "region_type": "headline",
+      "article_id": "art1",
+      "text": "Use 80% capacity for medical-grade oxygen: state govt to industry",
+      "text_complete": true
+    },
+    {
+      "id": "gt04",
+      "bbox": {"x": 18, "y": 380, "w": 420, "h": 80},
+      "region_type": "body",
+      "article_id": "art1",
+      "text": "With cases spiking by the day and demand from across the state increasing sharply, not all districts have sufficient supplies, forcing the move",
+      "text_complete": true
+    },
+    {
+      "id": "gt05",
+      "bbox": {"x": 448, "y": 240, "w": 355, "h": 185},
+      "region_type": "photo",
+      "article_id": "art1",
+      "text": "",
+      "text_complete": true
+    },
+    {
+      "id": "gt06",
+      "bbox": {"x": 448, "y": 428, "w": 355, "h": 34},
+      "region_type": "caption",
+      "article_id": "art1",
+      "text": "In May, Saifee Ambulance at Bhendi Bazar had started giving oxygen cylinders on rent to housing societies. FILE PIC",
+      "text_complete": true
+    },
+    {
+      "id": "gt07",
+      "bbox": {"x": 812, "y": 230, "w": 190, "h": 135},
+      "region_type": "body",
+      "article_id": "art1",
+      "text": "DHARMENDRA JORE dharmendra.jore@mid-day.com WITH a sharp rise in COVID-19 positive cases in Maharashtra, the demand for oxygen has increased manifold and not all the districts have their own",
+      "text_complete": true
+    },
+    {
+      "id": "gt08",
+      "bbox": {"x": 1008, "y": 230, "w": 200, "h": 130},
+      "region_type": "body",
+      "article_id": "art1",
+      "text": "oxygen production factories. To ensure seamless supply of oxygen across the state, the government has asked local producers, especially those with industrial licences, to use 80 per cent of their capacity for production of medical-grade oxygen. P05",
+      "text_complete": true
+    },
+    {
+      "id": "gt09",
+      "bbox": {"x": 812, "y": 368, "w": 398, "h": 95},
+      "region_type": "quote",
+      "article_id": "art1",
+      "text": "'There are many state-run COVID-19 facilities that need uninterrupted supply of oxygen. One contingency measure is to get the gas produced locally to boost our supply chain' A senior Mantralaya officer",
+      "text_complete": true
+    },
+    {
+      "id": "gt10",
+      "bbox": {"x": 15, "y": 490, "w": 785, "h": 335},
+      "region_type": "headline",
+      "article_id": "art2",
+      "text": "RESTARTING LOCAL TRAINS? REWORK STATIONS: STUDY",
+      "text_complete": true
+    },
+    {
+      "id": "gt11",
+      "bbox": {"x": 15, "y": 838, "w": 780, "h": 60},
+      "region_type": "body",
+      "article_id": "art2",
+      "text": "Global NGO's research says suburban stations need overhaul and better space management for safe commute during the pandemic",
+      "text_complete": true
+    },
+    {
+      "id": "gt12",
+      "bbox": {"x": 15, "y": 905, "w": 195, "h": 255},
+      "region_type": "body",
+      "article_id": "art2",
+      "text": "RAJENDRA B. AKLEKAR rajendra.aklekar@mid-day.com GIVEN the public and political pressure, local trains could soon be back, but how will the Railways handle crowds safely? Global public transit think tank World Resources Institute (WRI), that has been conducting studies on the Mumbai suburban railway, said the solution is to redesign existing railway stations after the lockdown for physical distancing. P07",
+      "text_complete": true
+    },
+    {
+      "id": "gt13",
+      "bbox": {"x": 10, "y": 1165, "w": 195, "h": 320},
+      "region_type": "quote",
+      "article_id": "art2",
+      "text": "'The idea is to consider the rail system from the user's perspective and to consider qualitative measures, instead of focusing solely on quantitative measures. We are analysing crowding patterns across platforms, stairs, entrances and exits, etc' Madhav Pai, exec director, WRI India Ross Center for Sustainable Cities",
+      "text_complete": true
+    },
+    {
+      "id": "gt14",
+      "bbox": {"x": 218, "y": 905, "w": 585, "h": 250},
+      "region_type": "photo",
+      "article_id": "art2",
+      "text": "",
+      "text_complete": true
+    },
+    {
+      "id": "gt15",
+      "bbox": {"x": 218, "y": 1158, "w": 585, "h": 48},
+      "region_type": "caption",
+      "article_id": "art2",
+      "text": "The ever busy Churchgate station is currently not so crowded as only those allowed to travel by train are seen there. PIC/BIPIN KOKATE; (below) currently only essential services staff and a certain few such as medical shop staff, are allowed to travel by trains, as seen here at Kurla. PIC/SAYYED SAMEER ABEDI",
+      "text_complete": true
+    },
+    {
+      "id": "gt16",
+      "bbox": {"x": 218, "y": 1210, "w": 375, "h": 280},
+      "region_type": "photo",
+      "article_id": "art2",
+      "text": "",
+      "text_complete": true
+    },
+    {
+      "id": "gt17",
+      "bbox": {"x": 598, "y": 1210, "w": 205, "h": 245},
+      "region_type": "other",
+      "article_id": "art2",
+      "text": "LOCALS TO PARTIALLY RESTART NEXT WEEK",
+      "text_complete": false
+    },
+    {
+      "id": "gt18",
+      "bbox": {"x": 598, "y": 1455, "w": 205, "h": 35},
+      "region_type": "caption",
+      "article_id": "art2",
+      "text": "mid-day's report on trains partially starting next week, on Sept 10",
+      "text_complete": true
+    },
+    {
+      "id": "gt19",
+      "bbox": {"x": 815, "y": 492, "w": 395, "h": 70},
+      "region_type": "headline",
+      "article_id": "art3",
+      "text": "Mumbai's doubling rate falls further to 58 days",
+      "text_complete": true
+    },
+    {
+      "id": "gt20",
+      "bbox": {"x": 815, "y": 565, "w": 390, "h": 60},
+      "region_type": "body",
+      "article_id": "art3",
+      "text": "State crosses 10 lakh COVID-19 cases with 24.8k on Friday, 14,308 patients discharged",
+      "text_complete": true
+    },
+    {
+      "id": "gt21",
+      "bbox": {"x": 815, "y": 640, "w": 170, "h": 250},
+      "region_type": "photo",
+      "article_id": "art3",
+      "text": "",
+      "text_complete": true
+    },
+    {
+      "id": "gt22",
+      "bbox": {"x": 815, "y": 893, "w": 170, "h": 48},
+      "region_type": "caption",
+      "article_id": "art3",
+      "text": "Residents of Dahisar being tested on Friday. PIC/SATEJ SHINDE",
+      "text_complete": true
+    },
+    {
+      "id": "gt23",
+      "bbox": {"x": 990, "y": 638, "w": 220, "h": 305},
+      "region_type": "body",
+      "article_id": "art3",
+      "text": "A CORRESPONDENT mailbag@mid-day.com WITH the highest daily count of close to 25,000 cases, the state crossed 10 lakh COVID-19 cases on Friday. The number of COVID cases in Mumbai continued to remain high, as 2,191 cases were reported in a single day on Friday with another 44 COVID-related deaths. State health department officials reported that among the fresh cases — 24,886 — Pune led with 3,922 cases, followed by Nagpur with 2,304 cases. P02",
+      "text_complete": true
+    },
+    {
+      "id": "gt24",
+      "bbox": {"x": 815, "y": 948, "w": 395, "h": 30},
+      "region_type": "other",
+      "article_id": "art3",
+      "text": "TESTING IN CITY CROSSES 15,000 MARK P02",
+      "text_complete": true
+    },
+    {
+      "id": "gt25",
+      "bbox": {"x": 815, "y": 988, "w": 395, "h": 80},
+      "region_type": "headline",
+      "article_id": "art4",
+      "text": "CR, WR data shows 25 lakh migrants back in the city",
+      "text_complete": true
+    },
+    {
+      "id": "gt26",
+      "bbox": {"x": 815, "y": 1072, "w": 390, "h": 80},
+      "region_type": "body",
+      "article_id": "art4",
+      "text": "MMRDA says most migrants working on its projects in city are back, officials hope private enterprises also pick up pace soon",
+      "text_complete": true
+    },
+    {
+      "id": "gt27",
+      "bbox": {"x": 815, "y": 1140, "w": 190, "h": 350},
+      "region_type": "body",
+      "article_id": "art4",
+      "text": "RAJENDRA B. AKLEKAR rajendra.aklekar@mid-day.com MIGRANTS are back in huge numbers. As per the latest figures collated by both Central Railway (CR) and Western Railway (WR) since the partial lifting of the lockdown began, more than 25 lakh migrants have returned to Mumbai by trains so far from various states. While Rajdhani-type special trains began services from May 12, a limited number of special passenger trains began to ply from June 1 with reserved seats and COVID-19 protocols. P07",
+      "text_complete": true
+    },
+    {
+      "id": "gt28",
+      "bbox": {"x": 1010, "y": 1140, "w": 200, "h": 145},
+      "region_type": "photo",
+      "article_id": "art4",
+      "text": "",
+      "text_complete": true
+    },
+    {
+      "id": "gt29",
+      "bbox": {"x": 1010, "y": 1288, "w": 200, "h": 72},
+      "region_type": "caption",
+      "article_id": "art4",
+      "text": "No. of labourers working on the Metro is now reaching almost pre-lockdown period. FILE PIC",
+      "text_complete": true
+    },
+    {
+      "id": "gt30",
+      "bbox": {"x": 1010, "y": 1365, "w": 200, "h": 105},
+      "region_type": "other",
+      "article_id": "art4",
+      "text": "9,47,560 No. of passengers who returned to city via WR",
+      "text_complete": true
+    }
+  ]
+}
