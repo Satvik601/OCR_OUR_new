@@ -62,12 +62,45 @@ def test_disjoint_boxes_all_kept(config):
     assert sorted(kept) == sorted(boxes)
 
 
-def test_partial_overlap_not_deduped(config):
-    """Half-overlapping boxes are distinct regions, not nested duplicates."""
+def test_heavy_overlap_merges_light_grazing_does_not(config):
+    """Heavily overlapping boxes are fragments of one region and merge; boxes
+    that merely graze each other (< min_overlap_merge of the smaller) stay apart."""
     a = (100, 100, 200, 100)
-    b = (200, 100, 200, 100)
+    b = (200, 100, 200, 100)  # 50% mutual overlap -> fragments -> merged union
     kept = filter_regions([a, b], PAGE, config)
-    assert a in kept and b in kept
+    assert kept == [(100, 100, 300, 100)]
+
+    # taller-than-line blocks (columns) that merely graze: neither the overlap
+    # rule (2.5% < threshold) nor the line-gap rule (too tall) may merge them
+    c = (100, 300, 200, 150)
+    d = (295, 300, 200, 150)
+    kept = filter_regions([c, d], PAGE, config)
+    assert c in kept and d in kept
+
+
+def test_overlapping_fragments_stitched(config):
+    """Boxes overlapping by a meaningful fraction merge into one region."""
+    a = (100, 100, 200, 60)
+    b = (260, 105, 200, 60)  # overlaps a by 40px-wide strip (~33% of a line height)
+    kept = filter_regions([a, b], PAGE, config)
+    assert len(kept) == 1
+    x, y, w, h = kept[0]
+    assert x == 100 and x + w == 460
+
+
+def test_same_line_word_fragments_stitched(config):
+    """Adjacent same-height boxes on one text line merge (word fragments)."""
+    words = [(100, 100, 90, 40), (210, 102, 110, 38), (340, 100, 80, 40)]
+    kept = filter_regions(words, PAGE, config)
+    assert len(kept) == 1
+
+
+def test_columns_never_stitched(config):
+    """Tall body-column blocks with a gutter gap must NOT merge."""
+    col1 = (40, 100, 180, 300)
+    col2 = (240, 100, 180, 300)  # 20px gutter
+    kept = filter_regions([col1, col2], PAGE, config)
+    assert len(kept) == 2
 
 
 def test_synthetic_blocks_survive_filtering(config):

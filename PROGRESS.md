@@ -206,3 +206,41 @@ the main checkout:
     git push origin main
 
 then sets `main` as the default branch on GitHub.
+
+## 2026-07-08 — milestone: user-feedback tuning round — ALL GATES RE-VERIFIED
+
+User feedback: (a) "grayscaling makes it worse, remove it"; (b) "words of the same
+article box recognised as different boxes — make it better without making it worse".
+
+Handled empirically with a 12-combination experiment matrix (grayscale method x blur x
+stitching), every combination scored against ground truth end-to-end:
+
+- **Removing the blur/binarization steps is not viable** — measured: layout coverage
+  collapses 25/30 → 13/30 without the Gaussian blur. (Note: OCR never reads the
+  binarized image; it is only used to FIND boxes. Text is always read from the
+  original color image.)
+- **Grayscale conversion switched to `min_channel`** (darkest of B/G/R): keeps colored
+  ink dark instead of washing it out. Measured better than luminance (recall
+  0.800 → 0.833 at the geometry level, precision up) — this addresses the real problem
+  behind the user's grayscale complaint.
+- **Fragment stitching added to filtering** (`filtering.stitch`): overlapping boxes merge
+  (overlapping boxes cannot be different columns — safe by construction) plus a
+  same-line gap rule for line-sized boxes. This fixes the reported fragmentation: the
+  "Use 80% capacity..." headline now exports as ONE region instead of three fragments.
+  A stacked-line (vertical) variant was measured to HURT (-3 matches) and is disabled.
+- Known trade, documented: one PHOTO region (gt05, no text) merges with its overlapping
+  caption and loses its geometric match — every text metric improves.
+
+**Metrics before → after** (evidence: debug_output/06_metrics_real.json):
+
+| metric | before | after |
+|---|---|---|
+| region precision | 0.727 | **0.800** |
+| region recall | 0.800 | 0.800 |
+| word accuracy | 0.862 | **0.875** |
+| fragmentation rate | 1.107 | **1.036** |
+| articles found | 4/4 | 4/4 |
+
+- Suite: 79/79 tests (5 new: colored-ink grayscale, bad-method validation, overlap
+  stitch, same-line stitch, columns-never-stitch). All six phase verification scripts
+  re-run: PASS.

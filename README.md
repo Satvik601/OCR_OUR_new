@@ -17,8 +17,8 @@ Under construction, phase by phase (see `PROGRESS.md`):
 | 5. Structured JSON export (full CLI pipeline) | **passed verification** |
 | 6. Evaluation (precision / recall / word accuracy) | **passed verification** |
 
-Current metrics on the real test page: word accuracy **0.86**, region precision/recall
-**0.73 / 0.80**, all 4 articles found (details in `TESTING.md`).
+Current metrics on the real test page: word accuracy **0.88**, region precision/recall
+**0.80 / 0.80**, all 4 articles found (details in `TESTING.md`).
 
 ## Setup
 

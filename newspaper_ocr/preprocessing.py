@@ -22,15 +22,28 @@ def _require_odd(value: int, minimum: int, key: str) -> None:
         raise ValueError(f"{key} must be an odd integer >= {minimum}, got {value!r}")
 
 
-def to_grayscale(image: np.ndarray) -> np.ndarray:
-    """Accept BGR/BGRA or already-grayscale input; return a single-channel copy."""
+def to_grayscale(image: np.ndarray, method: str = "luminance") -> np.ndarray:
+    """Accept BGR/BGRA or already-grayscale input; return a single-channel copy.
+
+    method:
+    - "luminance":   standard weighted conversion (cv2 BGR2GRAY).
+    - "min_channel": darkest of B/G/R per pixel — colored ink (red/blue text,
+      reversed boxes) stays dark instead of washing out to mid-gray, at the
+      cost of colored photo areas darkening too.
+    """
     if image.ndim == 3:
         if image.shape[-1] == 1:  # single channel with explicit axis
             return image[:, :, 0].copy()
-        if image.shape[-1] in (3, 4):
+        if image.shape[-1] not in (3, 4):
+            raise ValueError(f"expected 1, 3 or 4 channels, got shape {image.shape}")
+        if method == "min_channel":
+            return image[:, :, :3].min(axis=2)
+        if method == "luminance":
             return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        raise ValueError(f"expected 1, 3 or 4 channels, got shape {image.shape}")
+        raise ValueError(f"preprocessing.grayscale_method must be 'luminance' or 'min_channel', got {method!r}")
     if image.ndim == 2:
+        if method not in ("luminance", "min_channel"):
+            raise ValueError(f"preprocessing.grayscale_method must be 'luminance' or 'min_channel', got {method!r}")
         return image.copy()
     raise ValueError(f"expected 2D or 3D image array, got shape {image.shape}")
 
@@ -106,7 +119,7 @@ def preprocess(image: np.ndarray, config: Config) -> np.ndarray:
     if image.dtype != np.uint8:
         raise ValueError(f"expected uint8 image, got dtype {image.dtype}")
     p = config.preprocessing
-    gray = to_grayscale(image)
+    gray = to_grayscale(image, p.grayscale_method)
     binary = binarize(gray, p)
     opened = remove_specks(binary, p.morph_open_kernel, p.morph_open_iterations)
     return clear_border(opened, p.border_margin_px)
