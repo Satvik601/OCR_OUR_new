@@ -3,6 +3,9 @@
 # Verification thresholds used by PHASE_VERIFICATION_LOOP.md checks live under `verification`.
 
 preprocessing:
+  grayscale_method: min_channel # luminance | min_channel; min_channel (darkest of B/G/R) keeps
+                                # colored ink dark — measured better than luminance on the real
+                                # page (recall 0.800 -> 0.833, precision 0.727 -> 0.735)
   gaussian_kernel: 3          # odd kernel size for Gaussian blur (halftone smoothing); 5 wiped small body text on the real page (loop iter 1)
   threshold_method: otsu+adaptive   # otsu | adaptive | otsu+adaptive — global-only Otsu lost small body text (loop iters 1-2)
   adaptive_block_size: 31     # odd; local window for adaptive threshold
@@ -43,6 +46,23 @@ filtering:
                               # resolution-dependent (KNOWN_ISSUES.md)
   max_area_ratio: 0.9         # discard regions covering more than this fraction of the page
   containment_threshold: 0.85 # a box this-much contained in another is considered nested → dropped
+  stitch:
+    # Merge fragments of one text line that survived as separate boxes
+    # (user-reported: words of the same article exported as different boxes).
+    # Height caps keep tall body-column blocks out so columns never merge.
+    enabled: true
+    min_overlap_merge: 0.15    # boxes overlapping >= this fraction of the smaller box merge
+                               # (overlapping boxes can't be different columns — always safe)
+    max_height: 110            # only line-sized boxes participate in the GAP rule below
+    max_height_ratio: 2.0      # fragments of one line have similar heights
+    min_vertical_overlap: 0.6  # of the shorter box — "same y-band"
+    max_gap_ratio: 0.7         # horizontal gap <= this x min(heights)
+    vertical:
+      # Stacked-line merging measurably hurt on the real page (merged distinct
+      # stacked regions, -3 matches) — kept available but OFF.
+      enabled: false
+      min_horizontal_overlap: 0.7  # of the narrower box
+      max_gap_ratio: 0.25          # vertical gap <= this x min(heights)
 
 ocr:
   psm: 6                      # Tesseract page segmentation: single uniform block

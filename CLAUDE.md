@@ -31,6 +31,15 @@ before the next phase starts.
 
 ## Decisions log
 
+- **2026-07-08 — user feedback round (grayscale + fragmentation):** user asked to
+  "remove grayscaling" — literal removal is impossible (thresholding needs one channel)
+  and removing the blur was measured catastrophic (layout 25/30 → 13/30). The real
+  improvement was `grayscale_method: min_channel`. Fragment stitching added in
+  filtering (overlap-merge is safe by construction: overlapping boxes cannot be
+  different columns); vertical stacked-line stitching measured harmful and left
+  disabled. Every change gated on the full verification chain; final metrics improved
+  or held on every axis except one no-text photo region (documented in KNOWN_ISSUES).
+
 - **2026-07-07 — real sample page:** the brief suggests a public-domain Chronicling America
   scan, but the user supplied `front_page.jpg` (mid-day, Mumbai, 2020-09-12, 1220x1490 RGB) in
   the repo root. Using it as `tests/fixtures/real_sample_page.jpg` since a user-provided page

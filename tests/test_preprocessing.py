@@ -108,6 +108,29 @@ def test_input_not_mutated(simple_bgr, config):
     assert np.array_equal(before, simple_bgr)
 
 
+def test_min_channel_keeps_colored_ink():
+    """Pure red text on white: min_channel keeps it near-black, luminance washes it out."""
+    from newspaper_ocr.preprocessing import to_grayscale
+
+    img = np.full((40, 120, 3), 255, np.uint8)
+    img[10:30, 10:110] = (0, 0, 255)  # BGR pure red block
+    lum = to_grayscale(img, "luminance")
+    dark = to_grayscale(img, "min_channel")
+    assert dark[20, 60] == 0
+    assert lum[20, 60] > 50  # luminance leaves red visibly lighter
+
+
+def test_bad_grayscale_method_fails_loudly(simple_bgr):
+    import copy
+
+    from newspaper_ocr.config import Config
+
+    data = copy.deepcopy(load_config().as_dict())
+    data["preprocessing"]["grayscale_method"] = "sepia"
+    with pytest.raises(ValueError, match="grayscale_method"):
+        preprocess(simple_bgr, Config(data))
+
+
 def test_accepts_hw1_single_channel(simple_bgr, config):
     gray3d = cv2.cvtColor(simple_bgr, cv2.COLOR_BGR2GRAY)[:, :, None]
     out = preprocess(gray3d, config)

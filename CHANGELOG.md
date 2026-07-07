@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### 2026-07-08 (session 3 — user-feedback tuning)
+- `preprocessing.grayscale_method: min_channel` (colored ink stays dark; measured
+  better than luminance). Blur removal tested and rejected (layout 25/30 → 13/30).
+- `filtering.stitch`: overlap-merge + same-line gap rule — fixes same-article words
+  exporting as separate boxes. Metrics: precision 0.727→0.800, word accuracy
+  0.862→0.875, fragmentation 1.107→1.036.
+
 ### 2026-07-08 (session 2, phases 4–6)
 - **Phase 4 per-region OCR** (verified: word accuracy 0.856 vs 0.70 threshold):
   original-image crops, 2x bicubic upscale, Tesseract PSM 6 / OEM 1, word-confidence

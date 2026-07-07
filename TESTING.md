@@ -99,7 +99,10 @@ Real-page CLI run (evidence: `debug_output/05_result_real.json`, regenerate with
 Project headline metrics on `real_sample_page.jpg` (evidence:
 `debug_output/06_metrics_real.json`, regenerate with `python scripts/verify_evaluation.py`):
 
-- Region precision **0.727**, recall **0.800** (33 detected / 30 GT / 24 matched at IoU ≥ 0.5)
-- Word accuracy **0.862** (GT-word-count weighted, matched complete-text regions)
-- Fragmentation rate **1.107** (mean detected boxes per overlapped GT region; 1.0 ideal)
+- Region precision **0.800**, recall **0.800** (30 detected / 30 GT / 24 matched at IoU ≥ 0.5)
+- Word accuracy **0.875** (GT-word-count weighted, matched complete-text regions)
+- Fragmentation rate **1.036** (mean detected boxes per overlapped GT region; 1.0 ideal)
 - Articles found **4/4**
+
+(Updated 2026-07-08 after the user-feedback tuning round: min_channel grayscale +
+fragment stitching. History in PROGRESS.md.)
