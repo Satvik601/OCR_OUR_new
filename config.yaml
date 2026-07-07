@@ -45,13 +45,17 @@ filtering:
   containment_threshold: 0.85 # a box this-much contained in another is considered nested → dropped
 
 ocr:
-  # Phase 4 (not yet implemented)
   psm: 6                      # Tesseract page segmentation: single uniform block
   oem: 1                      # LSTM engine
   lang: eng
   upscale_factor: 2.0         # bicubic upscale before OCR
   min_text_chars: 3           # post-OCR: drop regions with fewer characters than this
-  min_word_confidence: 30     # post-OCR: garbage filter
+  min_word_confidence: 30     # post-OCR: words below this Tesseract confidence are dropped
+  cache_enabled: true         # content-hash cache of Tesseract results (crop bytes + params)
+  cache_dir: .ocr_cache       # gitignored; delete to invalidate
+
+limits:
+  max_image_pixels: 100000000   # 100 MP; CLI rejects images declaring more (decompression-bomb guard)
 
 verification:
   preprocessing:
