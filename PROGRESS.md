@@ -192,6 +192,17 @@ metrics without errors.
 ## 2026-07-08 — ALL SIX PIPELINE PHASES COMPLETE
 
 Every phase passed PHASE_VERIFICATION_LOOP.md on the real page and is committed and
-tagged. Outstanding before the project is fully "done" per GITHUB_PUSH_PROTOCOL.md:
-the user must supply the GitHub repo URL so all commits + tags can be pushed
-(`git push --follow-tags`). Open quality items live in KNOWN_ISSUES.md.
+tagged. Open quality items live in KNOWN_ISSUES.md.
+
+## 2026-07-08 — PUSHED TO GITHUB
+
+User supplied the repo URL (https://github.com/Satvik601/OCR_OUR_new). Branch
+`worktree-ocr-pipeline-build` + all six phase tags pushed (`--follow-tags`), completing
+GITHUB_PUSH_PROTOCOL.md retroactively for every milestone. The agent does not push or
+merge `main` itself (harness guardrail); to land the work on `main` the user runs, from
+the main checkout:
+
+    git merge --ff-only worktree-ocr-pipeline-build
+    git push origin main
+
+then sets `main` as the default branch on GitHub.
