@@ -1,0 +1,49 @@
+# Tunable parameters for the newspaper OCR pipeline.
+# Every stage reads its parameters from here — no magic numbers in code.
+# Verification thresholds used by PHASE_VERIFICATION_LOOP.md checks live under `verification`.
+
+preprocessing:
+  gaussian_kernel: 5          # odd kernel size for Gaussian blur (halftone smoothing)
+  morph_open_kernel: 3        # square kernel for morphological opening (speck removal)
+  morph_open_iterations: 1
+  border_margin_px: 5         # components whose bbox touches within this margin of the page edge are cleared
+
+layout:
+  # Phase 2 (not yet implemented) — values are initial estimates, to be tuned in the loop
+  horizontal_dilate_kernel: [40, 1]   # connect characters into lines
+  vertical_dilate_kernel: [1, 20]     # merge lines into blocks
+  closing_kernel: [5, 5]
+  closing_iterations: 1
+
+filtering:
+  # Phase 3 (not yet implemented)
+  min_area_px: 500            # discard regions smaller than this
+  max_area_ratio: 0.9         # discard regions covering more than this fraction of the page
+  containment_threshold: 0.85 # a box this-much contained in another is considered nested → dropped
+
+ocr:
+  # Phase 4 (not yet implemented)
+  psm: 6                      # Tesseract page segmentation: single uniform block
+  oem: 1                      # LSTM engine
+  lang: eng
+  upscale_factor: 2.0         # bicubic upscale before OCR
+  min_text_chars: 3           # post-OCR: drop regions with fewer characters than this
+  min_word_confidence: 30     # post-OCR: garbage filter
+
+verification:
+  preprocessing:
+    # Speckle check: connected components smaller than min_speckle_area_px are speckles.
+    # Pass if speckles-per-megapixel is below max_speckle_per_mpx.
+    min_speckle_area_px: 10
+    max_speckle_per_mpx: 1500
+    # Character-loss check: for each ground-truth text region, ink (foreground) pixels in the
+    # preprocessed image must be at least min_ink_retention of a per-crop plain-Otsu baseline.
+    min_ink_retention: 0.5
+    max_lost_region_pct: 10   # at most this % of GT text regions may fail the retention check
+  layout:
+    min_iou: 0.5
+    min_gt_coverage: 0.8      # ≥80% of GT regions matched with IoU ≥ min_iou
+  filtering:
+    region_count_tolerance: 0.2   # ±20% of GT article count
+  ocr:
+    word_accuracy_threshold: 0.70
