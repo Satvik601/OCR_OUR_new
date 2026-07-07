@@ -2,8 +2,6 @@
 
 ## Open
 
-- **No `origin` remote.** Commits and tags are local-only until the user supplies the
-  GitHub repo URL (GITHUB_PUSH_PROTOCOL.md precondition).
 - **Real sample page is copyrighted.** `front_page.jpg` / `tests/fixtures/real_sample_page.jpg`
   is a 2020 mid-day (Mumbai) front page supplied by the user — not a public-domain archive
   scan. Fine for local testing; **review before pushing to a public repo.** A public-domain
@@ -67,6 +65,9 @@
   dev dependencies.
 
 ## Resolved
+
+- ~~No `origin` remote~~ — user supplied https://github.com/Satvik601/OCR_OUR_new
+  (2026-07-08); all milestones + tags pushed, `main` set as default branch.
 
 - ~~gt03 italic headline exported as 3 word fragments (0.30 word accuracy)~~ — fixed by
   filtering.stitch overlap-merge (2026-07-08); now one region, full text.
