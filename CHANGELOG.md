@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### 2026-07-08 (session 2, phases 4–6)
+- **Phase 4 per-region OCR** (verified: word accuracy 0.856 vs 0.70 threshold):
+  original-image crops, 2x bicubic upscale, Tesseract PSM 6 / OEM 1, word-confidence
+  garbage filter, SHA-256 content-hash cache (.ocr_cache/). `text_metrics.py` added.
+- **Phase 5 JSON export** (verified: schema-valid, 32 regions, 3,795 chars): full
+  pipeline wired into the CLI; `validate_document` schema gate; integration test.
+- **Phase 6 evaluation harness** (verified: runs end-to-end, numeric metrics):
+  precision 0.719 / recall 0.767 / word accuracy 0.856 / fragmentation 1.111 /
+  4 of 4 articles found on the real page.
+
 ### 2026-07-08 (session 2, phase 3)
 - **Phase 3 filtering implemented and verified** (loop passed on iteration 5: 35 kept
   regions within the 24–36 window, zero ground-truth matches lost): area floor/ceiling +

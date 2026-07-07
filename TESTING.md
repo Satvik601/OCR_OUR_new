@@ -71,3 +71,35 @@ with `python scripts/verify_filtering.py`):
 - GT matches lost to filtering: **0** (25 matched before → 25 after) — PASS
 - Thresholds: min_area 4000 px², max_area_ratio 0.9, containment 0.85 largest-first
 - Unit tests (whole suite): 41/41 pass
+
+### Phase 4 — per-region OCR (verified 2026-07-08, loop iteration 1)
+
+On `real_sample_page.jpg` (evidence: `debug_output/04_ocr_real.txt`, regenerate with
+`python scripts/verify_ocr.py`; first run takes ~1 min, repeats hit the .ocr_cache):
+
+- **Aggregate word accuracy 0.862** (threshold ≥ 0.70) — PASS (0.856 before the BGR→RGB review fix)
+- Scored over 20 matched GT text regions, 550 GT words, weighted by region word count
+- Mean Tesseract word confidence per region: 75–95
+- Known weak regions: masthead logo 0.00 (stylized graphic), gt03 italic headline 0.30
+  (detected box clips it — IoU 0.51)
+
+### Phase 5 — JSON export (verified 2026-07-08, loop iteration 1)
+
+Real-page CLI run (evidence: `debug_output/05_result_real.json`, regenerate with
+`python scripts/verify_export.py`):
+
+- 33 regions exported, 3,789 characters of text, 77 candidates dropped
+- Schema validation: PASS (validate_document, also enforced inside the CLI)
+- Non-empty text in every exported region: PASS
+- Integration test: full pipeline on `synthetic_simple.png` via `run.main` — valid JSON,
+  ≥3 regions, >50 words, headline recovered
+
+### Phase 6 — evaluation harness (verified 2026-07-08, loop iteration 1)
+
+Project headline metrics on `real_sample_page.jpg` (evidence:
+`debug_output/06_metrics_real.json`, regenerate with `python scripts/verify_evaluation.py`):
+
+- Region precision **0.727**, recall **0.800** (33 detected / 30 GT / 24 matched at IoU ≥ 0.5)
+- Word accuracy **0.862** (GT-word-count weighted, matched complete-text regions)
+- Fragmentation rate **1.107** (mean detected boxes per overlapped GT region; 1.0 ideal)
+- Articles found **4/4**

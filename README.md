@@ -13,9 +13,12 @@ Under construction, phase by phase (see `PROGRESS.md`):
 | 1. Preprocessing (grayscale → blur → Otsu∪adaptive → opening → border clear) | **passed verification** |
 | 2. Layout detection (two-scale morphology, contour boxes) | **passed verification** |
 | 3. Filtering (area / containment / garbage text) | **passed verification** |
-| 4. Per-region OCR (Tesseract PSM 6, LSTM, 2x bicubic upscale) | not started |
-| 5. Structured JSON export | not started |
-| 6. Evaluation (precision / recall / word accuracy) | not started |
+| 4. Per-region OCR (Tesseract PSM 6, LSTM, 2x bicubic upscale, content-hash cache) | **passed verification** |
+| 5. Structured JSON export (full CLI pipeline) | **passed verification** |
+| 6. Evaluation (precision / recall / word accuracy) | **passed verification** |
+
+Current metrics on the real test page: word accuracy **0.86**, region precision/recall
+**0.73 / 0.80**, all 4 articles found (details in `TESTING.md`).
 
 ## Setup
 

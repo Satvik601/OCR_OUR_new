@@ -91,7 +91,7 @@ artifacts; phase 2 was re-verified after every change and never regressed below 
   All fixed; 6 new tests. Reviewer confirmed boxes.py math, greedy matching, and
   no-mutation properties empirically.
 - Final state: 25/30 = 83% coverage, 41/41 tests, verify_layout PASS.
-- Commit + tag: recorded below after push protocol step.
+- Commit `a30b48e`, tag `v0.2-layout` (local-only, push pending remote).
 
 ## 2026-07-08 — milestone: PHASE 3 FILTERING — verification loop PASSED
 
@@ -113,4 +113,78 @@ matched before filtering may lose its match after.
   survival, partial-overlap protection, stages-1-3 end-to-end on synthetic).
 - Visual inspection of `debug_output/03_filtering_real.png`: kept boxes map to real
   regions; dropped boxes are word fragments and nested duplicates.
-- Commit + tag: recorded below after push protocol step.
+- Commit `fcf3d52`, tag `v0.3-filtering` (local-only, push pending remote).
+
+## 2026-07-08 — milestone: PHASE 4 PER-REGION OCR — verification loop PASSED (iteration 1)
+
+Criterion: aggregate word accuracy ≥ 0.70 (config `verification.ocr.word_accuracy_threshold`)
+against GT text over matched text regions, weighted by GT word count.
+
+- **Word accuracy 0.862** over 20 matched text regions / 550 GT words — PASS on the
+  first loop iteration (0.856 pre-review; the reviewer-found BGR→RGB fix improved it) (evidence: `debug_output/04_ocr_real.txt`, per-region GT vs OCR).
+- Per-region range: body text 0.79–0.96; headlines 0.30–0.91 (gt03's detected box clips
+  the italic headline); masthead 0.00 (stylized logo, expected — logged in KNOWN_ISSUES).
+- Implementation: crop from ORIGINAL image, 2x bicubic upscale, Tesseract PSM 6 / OEM 1
+  via pytesseract image_to_data; words under confidence 30 dropped; results under 3 chars
+  collapse to empty. Content-hash cache (SHA-256 of crop+params → .ocr_cache/) so repeat
+  runs skip Tesseract.
+- Unit tests: test_ocr.py (5: clean read, blank crop, noise garbage filter, grayscale
+  input, cache-hit skips Tesseract) + test_text_metrics.py (8: tokenize, word-level
+  Levenshtein, accuracy edge cases). Suite: 54/54.
+- python-reviewer findings (2 HIGH, 4 MEDIUM) all fixed + 6 regression tests: division
+  by zero at min_text_chars=0, unguarded cache read, non-atomic cache write, psm/oem/lang
+  validation before the Tesseract invocation, and a real BGR→RGB correctness bug
+  (pytesseract/PIL assumes RGB; colored regions had channels swapped) — fixing it raised
+  word accuracy 0.856 → 0.862. Levenshtein O(n·m) noted as fine at region scale.
+- security-reviewer (phases 4+5 combined scope, per CLAUDE.md cadence decision):
+  no CRITICAL/HIGH open — the Tesseract config-injection vector was already closed by
+  _validate_tesseract_params. Fixed from its findings: decompression-bomb guard
+  (limits.max_image_pixels, header check before decode) and cache value type validation.
+  LOW leftovers (cache_dir trust boundary, pip-audit in CI) logged in KNOWN_ISSUES.md.
+- Commit + tag: recorded below after review + push protocol step.
+
+## 2026-07-08 — milestone: PHASE 5 JSON EXPORT — verification loop PASSED (iteration 1)
+
+Criteria: CLI JSON validates against the ARCHITECTURE.md schema; every region present
+with required fields; no malformed entries.
+
+- Full pipeline wired into the CLI: `python -m newspaper_ocr.run --input ... --output ...`
+  now produces the final artifact end-to-end (preprocess → layout → filter → per-region
+  OCR → garbage-drop → export).
+- On the real page: **33 regions exported, 3,789 chars of text, schema check PASS,
+  no empty-text entries** (evidence: `debug_output/05_result_real.json` + region overlay
+  `05_regions.png`, regenerate with `python scripts/verify_export.py`).
+- `export.validate_document` is the schema gate (dependency-free), used by tests, the
+  CLI itself (a failing document never gets written), and the verification script.
+- detection_confidence is currently the region's ink density in the binary — documented
+  as a weak proxy in ARCHITECTURE.md.
+- Integration test added per the brief (full pipeline on synthetic page through
+  `run.main`, JSON schema-validated, >50 words extracted, headline text recovered).
+  Suite: 63/63.
+- Commit + tag: recorded below after review + push protocol step.
+
+## 2026-07-08 — milestone: PHASE 6 EVALUATION — verification loop PASSED (iteration 1)
+
+Criterion: evaluation runs end-to-end on `real_sample_page.jpg` and produces numeric
+metrics without errors.
+
+**Project headline metrics on the real page** (evidence:
+`debug_output/06_metrics_real.json`, regenerate with `python scripts/verify_evaluation.py`):
+
+| metric | value |
+|---|---|
+| detected regions | 33 (GT: 30) |
+| matched at IoU ≥ 0.5 | 24 |
+| region precision | 0.727 |
+| region recall | 0.800 |
+| word accuracy (weighted) | 0.862 |
+| fragmentation rate | 1.107 (1.0 = ideal) |
+| **major articles found** | **4 / 4** |
+
+- Note: recall (0.800 over ALL GT regions incl. photos) is lower than layout coverage
+  (83%) because the post-OCR garbage filter intentionally drops textless regions
+  (photos) from the final document.
+- evaluate() metrics: greedy IoU matching (same 0.5 criterion as the layout gate),
+  GT-word-count-weighted word accuracy, fragmentation (overlaps at IoU ≥ 0.1),
+  articles found. Unit-tested on constructed documents (5 tests). Suite: 68/68.
+- Commit + tag: recorded below after review + push protocol step.

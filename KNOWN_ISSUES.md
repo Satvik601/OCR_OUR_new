@@ -43,11 +43,25 @@
 - **`filtering.min_area_px` is absolute pixels (4000), so it's resolution-dependent.**
   Correct for the 1220x1490 test page (smallest real region ~7200 px²); a much
   higher-resolution scan would need this scaled (or made relative to page area).
+- **OCR reads the masthead logo as page furniture, not "mid-day"** (stylized display
+  lettering; its detected box also absorbs the dateline strip). Word accuracy 0.00 on
+  that one region — acceptable page-furniture loss, but a masthead/logo classifier would
+  fix it if titles matter downstream.
+- **gt03 (italic serif headline) scores 0.30 word accuracy** because its detected box
+  only partially covers the headline (IoU 0.51) — an upstream layout imprecision, not an
+  OCR failure (Tesseract reads what's in the crop correctly).
 - **No region_type classification** — everything exports as `unclassified` (schema has the
   field so downstream consumers don't break when classification lands).
 - **No deskew step.** The brief's preprocessing list doesn't include one; synthetic noisy
   fixture includes mild skew to find out empirically whether it hurts layout detection.
 
+- **`ocr.cache_dir` is a trust boundary** (security review 2026-07-08): the config value
+  is used as a filesystem path without containment checks. Filenames are always
+  sha256+".json" so there's no traversal primitive, but a hostile config could point the
+  cache at any user-writable directory. Fine for a local CLI running as the invoking
+  user; add path containment if config files ever come from untrusted sources.
+- **No dependency CVE audit in CI** — security review suggests `pip-audit -r
+  requirements.txt` at milestone sign-off; no CI pipeline exists yet to host it.
 - **`types-PyYAML` not installed** — `mypy` flags `import yaml` as untyped. mypy is not
   (yet) part of the project toolchain; if it gets added to CI, add `types-PyYAML` to the
   dev dependencies.

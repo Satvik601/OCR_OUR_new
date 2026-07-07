@@ -47,10 +47,15 @@ gets recorded here when a comparison happens.
 | Stage | Backend | External model? | License |
 |---|---|---|---|
 | Preprocessing | classical CV (OpenCV) | no | Apache-2.0 (opencv-python) |
-| Layout | classical morphology (planned) | no | — |
-| Filtering | rule-based (planned) | no | — |
-| OCR | Tesseract 5.5.0 via pytesseract (planned) | pretrained LSTM `eng` traineddata, official repo | Apache-2.0 |
-| Evaluation | in-repo metrics (planned) | no | — |
+| Layout | classical two-scale morphology | no | — |
+| Filtering | rule-based geometry | no | — |
+| OCR | Tesseract 5.5.0 via pytesseract | pretrained LSTM `eng` traineddata, official repo | Apache-2.0 |
+| Evaluation | in-repo metrics (`evaluation.py`, `text_metrics.py`) | no | — |
+
+Every stage ended up classical CV / rule-based except OCR itself (Tesseract's pretrained
+LSTM, which the brief always allowed). No heavier pretrained layout model was needed to
+meet the verification criteria on the test page; the pluggable interfaces remain if one
+is ever compared.
 
 ## Preprocessing detail (stage 1)
 
@@ -86,6 +91,15 @@ Two passes over the binary page, boxes unioned (`newspaper_ocr/layout.py`):
 The union intentionally contains nested/duplicate boxes; stage 3 removes them. Shared box
 math (IoU, containment, greedy matching) lives in `newspaper_ocr/boxes.py`.
 
+## OCR detail (stage 4)
+
+`ocr_region` crops come from the ORIGINAL image (never the binary), get a 2x bicubic
+upscale, then Tesseract with `--psm 6 --oem 1` via pytesseract `image_to_data`. Words
+below `ocr.min_word_confidence` are dropped; results shorter than `ocr.min_text_chars`
+collapse to empty text, which the pipeline treats as "no text here" (that is how photo
+regions fall out of the final document). Results are cached by SHA-256 of crop bytes +
+parameters under `ocr.cache_dir` (gitignored) — delete the directory to invalidate.
+
 ## Filtering detail (stage 3)
 
 `filter_regions` (geometry only — garbage-text filtering happens post-OCR in stage 4):
@@ -106,7 +120,7 @@ math (IoU, containment, greedy matching) lives in `newspaper_ocr/boxes.py`.
       "id": "str — r001, r002, ... stable within a document",
       "bbox": {"x": "int", "y": "int", "w": "int", "h": "int"},
       "text": "str — OCR output, post-filtered",
-      "detection_confidence": "float 0-1 — layout stage confidence signal",
+      "detection_confidence": "float 0-1 — currently the region's ink density in the binarized page (weak proxy until a learned detector exists)",
       "ocr_confidence": "float 0-100 — mean Tesseract word confidence, -1 if unavailable",
       "region_type": "headline | body | caption | masthead | quote | other | unclassified"
     }
