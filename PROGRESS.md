@@ -54,4 +54,6 @@ Verification per PHASE_VERIFICATION_LOOP.md, real input `tests/fixtures/real_sam
   Test suite after fixes: 14/14 passed; verification loop re-run: PASS.
 - Security review note: deferred to the phases with actual attack surface (CLI/OCR
   subprocess in phase 4+) — recorded in CLAUDE.md decisions log.
-- Commit + tag: recorded below after push protocol step.
+- Commit `199218b`, tag `v0.1-preprocessing`, on branch `worktree-ocr-pipeline-build`.
+  Local-only: no `origin` remote configured yet — push happens retroactively
+  (`git push --follow-tags origin main`) once the user supplies the repo URL.
