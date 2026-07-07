@@ -69,6 +69,25 @@ before the next phase starts.
   loop-operator). `mle-reviewer` does not exist in the installed plugin — `code-reviewer`
   covers the evaluation-harness review instead. The phased plan itself is taken directly from
   the brief (its six stages ARE the plan); recorded in `PROGRESS.md` rather than re-derived.
+- **2026-07-07 — phase 2 started with phase-1 push still pending:** the brief gates each
+  phase on the previous one being pushed, but no `origin` exists yet and the user asked to
+  continue building. Deviation: phases proceed; all milestone commits + tags push
+  retroactively (`git push --follow-tags`) the moment the repo URL is supplied. The
+  protocol's local-only clause (GITHUB_PUSH_PROTOCOL.md preconditions) already anticipates
+  this.
+- **2026-07-08 — filtering pass-criterion interpretation:** the loop table says region
+  count within ±20% of "ground-truth article count". Detection is region-level (headline/
+  body/caption boxes), so comparing to the ARTICLE count (4) is meaningless; interpreted as
+  the GT REGION count (30 → allowed 24-36), alongside the table's hard rule that no GT
+  region matched before filtering may lose its match. Flagged here per the protocol's
+  "don't silently reinterpret criteria" rule.
+- **2026-07-08 — layout display-pass hardening came from phase 3's loop:** filtering's
+  failures exposed layout over-merge artifacts (photo blobs chaining regions; boxes chained
+  across column gutters). Fixes were made in the layout stage (component height window
+  26-120px; gutter split = mask-level cut + contour re-extraction, only for boxes taller
+  than one display line) and phase 2 was re-verified after each change (ended 83%, never
+  below 80%). The alternative — hiding the artifacts in filtering — was tried first
+  (iterations 1-3) and rejected: every geometric absorb-guard had counterexamples.
 - **2026-07-07 — security-reviewer cadence:** the brief asks for a security-reviewer pass
   "before any phase is marked done". Phase 1 is pure in-process image math (no file-format
   parsing beyond cv2.imread, no subprocess, no network, no user-controlled paths), so the

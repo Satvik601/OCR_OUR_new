@@ -48,3 +48,26 @@ border margin 5 (evidence: `debug_output/01_preprocessed_real.png`, regenerate w
 - Note: component count rose from 1491 (global Otsu) to 3485 (union method) because the
   adaptive pass outlines photo textures — acceptable at this stage; layout/filtering own
   photo-region handling.
+
+### Phase 2 — layout detection (verified 2026-07-07, loop iteration 3)
+
+On `real_sample_page.jpg` (evidence: `debug_output/02_layout_real.png`, regenerate with
+`python scripts/verify_layout.py`):
+
+- **GT coverage 25/30 = 83%** at IoU ≥ 0.5 (limit ≥ 80%) — PASS
+- Matched IoUs: min 0.51, median 0.73; detected boxes: 110 (duplicates removed in stage 3)
+- Unmatched (5): gt02, gt18, gt28, gt29, gt30 — see KNOWN_ISSUES.md
+- Parameters chosen by sweeping kernels and display-pass settings against ground truth
+  (fine pass [10,1]/[1,8]/[9,9]; display pass: components 26–120px tall, closes
+  [60,1]/[1,20], gutter split of chained boxes). Sweep peak without the display pass was
+  22/30 = 73%.
+
+### Phase 3 — filtering (verified 2026-07-08, loop iteration 5)
+
+On `real_sample_page.jpg` (evidence: `debug_output/03_filtering_real.png`, regenerate
+with `python scripts/verify_filtering.py`):
+
+- Kept regions: **35** (allowed 24–36 = GT region count 30 ± 20%) — PASS
+- GT matches lost to filtering: **0** (25 matched before → 25 after) — PASS
+- Thresholds: min_area 4000 px², max_area_ratio 0.9, containment 0.85 largest-first
+- Unit tests (whole suite): 41/41 pass

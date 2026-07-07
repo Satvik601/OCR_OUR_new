@@ -66,6 +66,33 @@ gets recorded here when a comparison happens.
 
 Output convention: `uint8`, ink = 255, background = 0.
 
+## Layout detection detail (stage 2)
+
+Two passes over the binary page, boxes unioned (`newspaper_ocr/layout.py`):
+
+1. **Fine pass** — horizontal closing (`layout.horizontal_dilate_kernel`, connects words
+   into lines; must stay below the column-gutter width), vertical closing
+   (`layout.vertical_dilate_kernel`, merges lines into blocks), square closing, then
+   external contours → boxes.
+2. **Display pass** (`layout.display_pass`) — only connected components with height in
+   [`min_component_height`, `max_component_height`] (headline/masthead glyphs; the upper
+   bound keeps photo blobs out) enter a separate mask that is closed aggressively; body
+   text isn't in the mask so nothing else fuses. Solves the "one vertical kernel can't
+   merge headline lines without fusing distinct regions" problem. Because the horizontal
+   closing must bridge headline word gaps (wider than column gutters), display boxes can
+   chain across columns — boxes taller than one display line are split at near-inkless
+   vertical bands of the original binary (mask-level cut + contour re-extraction).
+
+The union intentionally contains nested/duplicate boxes; stage 3 removes them. Shared box
+math (IoU, containment, greedy matching) lives in `newspaper_ocr/boxes.py`.
+
+## Filtering detail (stage 3)
+
+`filter_regions` (geometry only — garbage-text filtering happens post-OCR in stage 4):
+1. Area floor `filtering.min_area_px` and ceiling `max_area_ratio` × page area.
+2. Containment de-duplication, largest-first: a box ≥ `containment_threshold` inside an
+   already-kept larger box is a nested duplicate and is dropped.
+
 ## Output JSON schema (stage 5 target)
 
 ```json

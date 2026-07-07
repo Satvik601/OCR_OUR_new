@@ -30,6 +30,19 @@
   THRESH_BINARY_INV** — those regions binarize as solid blobs, which layout detection will
   see as one region and OCR (which re-crops the original, not the binary) may still read.
   To evaluate honestly in phase 2/4.
+- **Layout: 5/30 GT regions unmatched at IoU 0.5 (coverage 83%, floor is 80%).**
+  Residual hard cases on the real page: (a) gt02 dateline strip fuses into the masthead
+  (descender of "mid-day" touches it); (b) gt18, gt28, gt29, gt30 small caption/photo/number
+  blocks fuse with neighbors in the dense bottom-right corners. Multi-line headlines (gt10,
+  gt25) were fixed by the display pass + gutter split. Ideas if this needs to improve:
+  whitespace-aware row splitting, or a pretrained layout model as an alternative backend
+  (brief allows it, interface is pluggable).
+- **Layout emits duplicate/nested boxes by design** (fine pass + display pass overlap, word
+  fragments inside display regions): 110 boxes vs 30 GT regions on the real page. Stage 3
+  (filtering) owns containment de-duplication — do not tune layout to hide this.
+- **`filtering.min_area_px` is absolute pixels (4000), so it's resolution-dependent.**
+  Correct for the 1220x1490 test page (smallest real region ~7200 px²); a much
+  higher-resolution scan would need this scaled (or made relative to page area).
 - **No region_type classification** — everything exports as `unclassified` (schema has the
   field so downstream consumers don't break when classification lands).
 - **No deskew step.** The brief's preprocessing list doesn't include one; synthetic noisy

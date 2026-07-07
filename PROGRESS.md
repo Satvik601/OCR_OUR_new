@@ -57,3 +57,60 @@ Verification per PHASE_VERIFICATION_LOOP.md, real input `tests/fixtures/real_sam
 - Commit `199218b`, tag `v0.1-preprocessing`, on branch `worktree-ocr-pipeline-build`.
   Local-only: no `origin` remote configured yet — push happens retroactively
   (`git push --follow-tags origin main`) once the user supplies the repo URL.
+- Post-review cleanups in `b5c9f0e` (reviewer verdict: Approve).
+
+## 2026-07-07 — milestone: PHASE 2 LAYOUT DETECTION — verification loop PASSED
+
+User instructed to continue phases with push still pending (see CLAUDE.md decisions log).
+Verification per PHASE_VERIFICATION_LOOP.md, real input `real_sample_page.jpg`,
+criterion: ≥80% of GT regions matched at IoU ≥ 0.5:
+
+| Loop iter | Change tested | Coverage | Result |
+|---|---|---|---|
+| 1 | brief's kernels [40,1]/[1,20] | 1/30 = 3% (page merged into 1 box) | **FAIL** |
+| 2 | kernels [10,1]/[1,8]/[9,9] + line-merge post-pass | 17/30 = 57% (merge pass over-merged) | **FAIL** |
+| 3 | line-merge replaced with two-scale display pass (components ≥26px tall closed separately at [60,1]/[1,20]) | **24/30 = 80%** | **PASS** |
+| 4* | display-pass hardening driven by the phase-3 loop: component height cap (≤120px keeps photo blobs out) + gutter split of chained boxes (mask-level cut + contour re-extraction) | **25/30 = 83%** | **PASS** |
+
+(*) iteration 4 changes were made while phase 3's loop exposed display-pass over-merge
+artifacts; phase 2 was re-verified after every change and never regressed below 80%.
+
+- Diagnosis between iterations used parameter sweeps against ground truth (documented in
+  TESTING.md); the two-scale approach is still pure classical CV.
+- Unit tests: 27/27 (incl. new test_boxes.py: IoU/containment/greedy matching; test_layout.py:
+  block recovery, column separation, fragmentation cap, blank page, bounds).
+- Synthetic fixture generator corrected during the loop: measured (getTextSize) ground-truth
+  boxes instead of estimates; realistic word-gap-to-gutter proportions.
+- Visual inspection of `debug_output/02_layout_real.png`: all major regions boxed; the 6
+  unmatched GT regions are hard cases logged in KNOWN_ISSUES.md (masthead-fused dateline,
+  two multi-line headlines, three fused small blocks bottom-right).
+- Detected boxes include word-level duplicates inside display regions — stage-3
+  filtering's job (containment removal), per ARCHITECTURE.md staging.
+- Code reviewed by python-reviewer agent (1 HIGH: empty-image validation gap; 2 MEDIUM:
+  unvalidated closing_iterations/min_component_height, missing validation tests; 2 LOW).
+  All fixed; 6 new tests. Reviewer confirmed boxes.py math, greedy matching, and
+  no-mutation properties empirically.
+- Final state: 25/30 = 83% coverage, 41/41 tests, verify_layout PASS.
+- Commit + tag: recorded below after push protocol step.
+
+## 2026-07-08 — milestone: PHASE 3 FILTERING — verification loop PASSED
+
+Criteria (see CLAUDE.md decisions log for the "article count" → region-count
+interpretation): kept-box count within ±20% of GT region count (24–36), and no GT region
+matched before filtering may lose its match after.
+
+| Loop iter | Change tested | Kept | Lost matches | Result |
+|---|---|---|---|---|
+| 1 | area floor 500 + containment 0.85, largest-first | 14 | 16 | **FAIL** — display-pass mega-boxes absorbed real regions |
+| 2 | display-pass component height cap ≤120 (photo blobs out) + box-level gutter split | 38 | 3 | **FAIL** — split kept union's y-extent |
+| 3 | split guard for single-line boxes (fixed synthetic regression) | 38 | 3 | **FAIL** — same 3 absorbed |
+| 4 | mask-level gutter cut + contour re-extraction | 39 | **0** | **FAIL** — count 39 > 36 |
+| 5 | min_area_px 500 → 4000 (smallest real GT region is ~7200 px²) | **35** | **0** | **PASS** |
+
+- Iterations 2–4's fixes live in the layout stage (root cause was there); phase 2 was
+  re-verified after each change (never below 80%, ended at 83%).
+- Unit tests: 41/41 (test_filtering.py: area floor/ceiling, nesting, dedupe, disjoint
+  survival, partial-overlap protection, stages-1-3 end-to-end on synthetic).
+- Visual inspection of `debug_output/03_filtering_real.png`: kept boxes map to real
+  regions; dropped boxes are word fragments and nested duplicates.
+- Commit + tag: recorded below after push protocol step.

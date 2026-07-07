@@ -43,21 +43,44 @@ def make_simple() -> tuple[np.ndarray, list[dict]]:
     img = np.full((H, W), 255, np.uint8)
     blocks: list[dict] = []
 
-    # headline band
-    cv2.putText(img, "SYNTHETIC HEADLINE NEWS", (40, 90), FONT, 1.4, 0, 3, cv2.LINE_AA)
-    blocks.append({"name": "headline", "bbox": [40, 55, 700, 50]})
+    # headline band (ground-truth box measured, not estimated)
+    headline = "SYNTHETIC HEADLINE NEWS"
+    (hw, hh), hbase = cv2.getTextSize(headline, FONT, 1.4, 3)
+    cv2.putText(img, headline, (40, 90), FONT, 1.4, 0, 3, cv2.LINE_AA)
+    blocks.append({"name": "headline", "bbox": [40, 90 - hh, hw, hh + hbase]})
 
-    # two body columns, 18 lines each
-    for col, x0 in enumerate((40, 420)):
+    # two body columns, 18 lines each. Proportions matter: real newspaper word
+    # gaps are far smaller than column gutters, so body text uses a small scale
+    # (word gap ~8px) with a wide gutter (~140px) and tight leading (16px).
+    body_scale = 0.4
+    for col, x0 in enumerate((40, 430)):
         y = 180
+        max_w = 0
+        top = bottom = None
         for line in _body_lines(rng, 18):
-            cv2.putText(img, line, (x0, y), FONT, 0.5, 0, 1, cv2.LINE_AA)
-            y += 28
-        blocks.append({"name": f"body_col{col + 1}", "bbox": [x0, 160, 340, y - 160]})
+            (tw, th), tb = cv2.getTextSize(line, FONT, body_scale, 1)
+            cv2.putText(img, line, (x0, y), FONT, body_scale, 0, 1, cv2.LINE_AA)
+            max_w = max(max_w, tw)
+            if top is None:
+                top = y - th
+            bottom = y + tb
+            y += 16
+        blocks.append(
+            {"name": f"body_col{col + 1}", "bbox": [x0, top, max_w, bottom - top]}
+        )
 
-    # caption line near the bottom
-    cv2.putText(img, "figure caption: a synthetic page for tests", (40, 920), FONT, 0.45, 0, 1, cv2.LINE_AA)
-    blocks.append({"name": "caption", "bbox": [40, 900, 420, 30]})
+    # two-line caption near the bottom (ground-truth box measured, not estimated;
+    # two lines keep its area representative of real captions)
+    cap_lines = [
+        "figure caption: a synthetic page for exercising the",
+        "layout detection and filtering stages of the pipeline",
+    ]
+    cap_w = 0
+    for k, text in enumerate(cap_lines):
+        (cw, ch), cbase = cv2.getTextSize(text, FONT, 0.4, 1)
+        cv2.putText(img, text, (40, 920 + 16 * k), FONT, 0.4, 0, 1, cv2.LINE_AA)
+        cap_w = max(cap_w, cw)
+    blocks.append({"name": "caption", "bbox": [40, 920 - ch, cap_w, 16 + ch + cbase]})
 
     return img, blocks
 

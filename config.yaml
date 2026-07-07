@@ -12,15 +12,35 @@ preprocessing:
   border_margin_px: 5         # components whose bbox touches within this margin of the page edge are cleared
 
 layout:
-  # Phase 2 (not yet implemented) — values are initial estimates, to be tuned in the loop
-  horizontal_dilate_kernel: [40, 1]   # connect characters into lines
-  vertical_dilate_kernel: [1, 20]     # merge lines into blocks
-  closing_kernel: [5, 5]
+  # Closing kernels (see layout.py: closing, not dilation, so boxes stay snug).
+  # [40,1]/[1,20] merged the whole real page into one region (loop iter 1);
+  # values below came from a coverage sweep against ground truth.
+  horizontal_dilate_kernel: [10, 1]   # connect characters into lines (must stay < column gutter ~15px)
+  vertical_dilate_kernel: [1, 8]      # merge lines into blocks
+  closing_kernel: [9, 9]
   closing_iterations: 1
+  display_pass:
+    # Second detection pass at display-text scale: only connected components at
+    # least min_component_height tall enter this mask (headline glyphs are
+    # 30-95px vs ~8px body glyphs), so aggressive closing here merges headline
+    # words/lines without fusing any body-scale regions. Boxes are unioned with
+    # the fine-scale pass; filtering (stage 3) removes duplicates/nesting.
+    enabled: true
+    min_component_height: 26
+    max_component_height: 120   # above this = photo/graphic blob, not a display glyph (over-merge fix, phase-3 loop)
+    horizontal_close: [60, 1]
+    vertical_close: [1, 20]
+    # Chained-across-gutter boxes get split at near-inkless vertical bands of the
+    # ORIGINAL binary (word gaps ~25-30px exceed gutters ~15px, so closing alone
+    # can't avoid the chaining):
+    gutter_min_px: 12
+    gutter_max_ink_ratio: 0.02  # a column counts as blank if <=2% of its pixels are ink
+    gutter_split_min_height: 150  # only boxes taller than one display line get split (a single line's word gaps are full-height blanks)
 
 filtering:
-  # Phase 3 (not yet implemented)
-  min_area_px: 500            # discard regions smaller than this
+  min_area_px: 4000           # discard regions smaller than this; smallest real region on the
+                              # 1220x1490 test page is ~7200 px². NOTE: absolute pixels —
+                              # resolution-dependent (KNOWN_ISSUES.md)
   max_area_ratio: 0.9         # discard regions covering more than this fraction of the page
   containment_threshold: 0.85 # a box this-much contained in another is considered nested → dropped
 

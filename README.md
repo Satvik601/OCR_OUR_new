@@ -11,8 +11,8 @@ Under construction, phase by phase (see `PROGRESS.md`):
 | Phase | Status |
 |---|---|
 | 1. Preprocessing (grayscale → blur → Otsu∪adaptive → opening → border clear) | **passed verification** |
-| 2. Layout detection (morphological, contour boxes) | not started |
-| 3. Filtering (area / containment / garbage text) | not started |
+| 2. Layout detection (two-scale morphology, contour boxes) | **passed verification** |
+| 3. Filtering (area / containment / garbage text) | **passed verification** |
 | 4. Per-region OCR (Tesseract PSM 6, LSTM, 2x bicubic upscale) | not started |
 | 5. Structured JSON export | not started |
 | 6. Evaluation (precision / recall / word accuracy) | not started |
